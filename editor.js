@@ -1,5 +1,8 @@
 var propsLens = Tscope.attr('props');
 var typeLens = Tscope.attr('type');
+var selectedLens = Tscope.attr('selected');
+var currentLens = Tscope.attr('current');
+var propsSelectedLens = propsLens.then(selectedLens);
 
 var SvgRect = React.createClass({
   onClick: function(e){
@@ -26,17 +29,15 @@ var skip_drop_click_hack;
 var SvgEditorTable = React.createClass({
   onSelect: function(itemCursor, e){
     skip_drop_click_hack = true;
-    console.log("select");
     if(!e.ctrlKey)
-      this.props.cursor.traversal().then(propsLens).then(Tscope.attr('selected')).set(false);
-    itemCursor.then(propsLens).then(Tscope.attr('selected')).set(true);
+      this.props.cursor.traversal().then(propsSelectedLens).set(false);
+    itemCursor.then(propsSelectedLens).set(true);
   },
   onClick: function(){
-    console.log("drop");
     if(skip_drop_click_hack){
       skip_drop_click_hack = false;
     } else {
-      this.props.cursor.traversal().then(propsLens).then(Tscope.attr('selected')).set(false);
+      this.props.cursor.traversal().then(propsSelectedLens).set(false);
     }
   },
   render: function() {
@@ -57,28 +58,29 @@ var SvgEditorTable = React.createClass({
 
 var SvgEditorControlPannel = React.createClass({
   onClick: function(){
-    var current = this.props.cursor.then(Tscope.attr('current')).get();
-    var fillLens = Tscope.attr('props').then(Tscope.attr('fill'));
+    var current = this.props.cursor.then(currentLens).get();
+    var fillLens =  propsLens.then(Tscope.attr('fill'));
     this.props.selected.then(fillLens).set(current);
   },
   onColorSelectClick: function(color){
     var self = this;
     return function(){
-      self.props.cursor.then(Tscope.attr('current')).set(color);
+      self.props.cursor.then(currentLens).set(color);
     }
   },
   render: function(){
     var self=this;
     var colors = this.props.cursor.then(Tscope.attr('colors')).get();
-    var current = this.props.cursor.then(Tscope.attr('current')).get();
+    var current = this.props.cursor.then(currentLens).get();
+    var selected = this.props.selected.get();
     return <div>
-            <h3> ControlPannel </h3>
-            {colors.map(function(item){
-              return <button onClick={self.onColorSelectClick(item)}>{item}</button>
-            })}
-            <br/>
-            <button onClick={this.onClick} type="button">Fill {current}!</button>
-            <ul>{this.props.selected.get().map(function(item){return <li>{item}</li>})}</ul>
+             <h3> ControlPannel </h3>
+             {colors.map(function(item){
+               return <button onClick={self.onColorSelectClick(item)}>{item}</button>
+             })}
+             <br/>
+             <button onClick={this.onClick} type="button">Fill {current}!</button>
+             <ul>{selected.map(function(item){return <li>{item}</li>})}</ul>
            </div>
   }
 });
@@ -142,9 +144,7 @@ var SvgEditor = React.createClass({
 });
 
 
-setInterval(function() {
-  React.render(
-    <SvgEditor />,
-    document.getElementById('container')
-  );
-}, 50);
+React.render(
+  <SvgEditor />,
+  document.getElementById('container')
+);
