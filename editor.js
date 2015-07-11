@@ -6,7 +6,8 @@ var SvgRect = React.createClass({
     this.props.onSelect(this.props.cursor, e);
   },
   render: function() {
-    return <rect onClick={this.onClick} x={this.props.x} y={this.props.y}  width={this.props.width} height={this.props.height} fill={this.props.fill} />
+    var stroke = this.props.selected ? "black" : "white";
+    return <rect onClick={this.onClick} x={this.props.x} y={this.props.y} width={this.props.width} stroke={stroke} height={this.props.height} fill={this.props.fill} />
   }
 });
 
@@ -15,7 +16,8 @@ var SvgCircle = React.createClass({
     this.props.onSelect(this.props.cursor, e);
   },
   render: function() {
-    return <circle onClick={this.onClick} cx={this.props.cx} cy={this.props.cy} r="40" stroke={this.props.stroke} fill={this.props.fill} />
+    var stroke = this.props.selected ? "black" : "white";
+    return <circle onClick={this.onClick} cx={this.props.cx} cy={this.props.cy} r="40" stroke={stroke} fill={this.props.fill} />
   }
 });
 
@@ -94,8 +96,13 @@ var SvgEditor = React.createClass({
          props: {cx: 40,
                  cy: 40,
                  selected: false,
-                 stroke: "red",
                  fill: "yellow"}
+        },
+        {type: SvgCircle, 
+         props: {cx: 400,
+                 cy: 50,
+                 selected: false,
+                 fill: "green"}
         },
         {type: SvgRect,
          props: {x: 100,
@@ -104,7 +111,16 @@ var SvgEditor = React.createClass({
                  width: 100,
                  height: 100,
                  fill: "red"}
+        },
+        {type: SvgRect,
+         props: {x: 200,
+                 y: 300,
+                 selected: false,
+                 width: 50,
+                 height: 100,
+                 fill: "blue"}
         }
+
       ],
       control_pannel: {
         colors: ['red', 'yellow', 'green', 'blue'],
