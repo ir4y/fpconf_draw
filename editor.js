@@ -59,9 +59,7 @@ var SvgEditorControlPannel = React.createClass({
   onClick: function(){
     var current = this.props.cursor.then(Tscope.attr('current')).get();
     var fillLens = Tscope.attr('props').then(Tscope.attr('fill'));
-    this.props.table.traversal(function(item){
-      return item.props.selected
-    }).then(fillLens).set(current);
+    this.props.selected.then(fillLens).set(current);
   },
   onColorSelectClick: function(color){
     var self = this;
@@ -73,9 +71,6 @@ var SvgEditorControlPannel = React.createClass({
     var self=this;
     var colors = this.props.cursor.then(Tscope.attr('colors')).get();
     var current = this.props.cursor.then(Tscope.attr('current')).get();
-    var selected = this.props.table.traversal(function(item){
-      return item.props.selected
-    }).get();
     return <div>
             <h3> ControlPannel </h3>
             {colors.map(function(item){
@@ -83,7 +78,7 @@ var SvgEditorControlPannel = React.createClass({
             })}
             <br/>
             <button onClick={this.onClick} type="button">Fill {current}!</button>
-            <ul>{selected.map(function(item){return <li>{item}</li>})}</ul>
+            <ul>{this.props.selected.get().map(function(item){return <li>{item}</li>})}</ul>
            </div>
   }
 });
@@ -135,8 +130,12 @@ var SvgEditor = React.createClass({
     });
     var pannelCursor = cursor.then(Tscope.attr('control_pannel'));
     var tableCursor = cursor.then(Tscope.attr('table'));
+    var selectedCursor = tableCursor.traversal(function(item){
+      return item.props.selected
+    });
+
     return <div>
-             <SvgEditorControlPannel cursor={pannelCursor} table={tableCursor} />
+             <SvgEditorControlPannel cursor={pannelCursor} selected={selectedCursor} />
              <SvgEditorTable cursor={tableCursor} />
            </div>
   }
